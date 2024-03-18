@@ -53,16 +53,16 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             firebaseFireStore.collection(USERS_COLLECTION)
                 .add(user)
-                .addOnSuccessListener {
-                    newUser.postValue(Resource.success(user))
-                }
-                .addOnFailureListener {
-                    Log.e("LoginViewModel", "createUserFireStore:failure", it)
+                .addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        newUser.postValue(Resource.success(user))
+                    } else {
+                        Log.e("LoginViewModel", "createUserFireStore:failure", it.exception)
+                        newUser.postValue(Resource.error("Create create new user."))
+                    }
 
-                    newUser.postValue(Resource.error("Create create new user."))
+                    loadingState.postValue(false)
                 }
-
-            loadingState.postValue(false)
         }
     }
 }

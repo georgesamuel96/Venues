@@ -11,4 +11,9 @@
     <string name="your_birthday_date">Your Birthday Date</string>
     <string name="select_date">Select date</string>
     <string name="age_less_than_required">Your age is less than 18 years, you are not allowed to register!</string>
+    <string name="enter_first_name">Please enter your first name</string>
+    <string name="enter_last_name">Please enter your first name</string>
+    <string name="enter_email">Please enter your valid email</string>
+    <string name="enter_password">Please enter a valid password contains at least 8 characters</string>
+    <string name="choose_birthday">Please enter your birthdate and you have to be older than 18 years old</string>
 </resources>

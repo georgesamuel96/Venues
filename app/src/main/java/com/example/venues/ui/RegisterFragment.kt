@@ -2,6 +2,8 @@ package com.example.venues.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import com.example.venues.R
 import com.example.venues.data.model.User
 import com.example.venues.data.remote.Status
 import com.example.venues.databinding.FragmentRegisterBinding
+import com.example.venues.utils.Util.showSnackBar
 import com.example.venues.viewmodel.LoginViewModel
 import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
@@ -78,7 +81,7 @@ class RegisterFragment : Fragment() {
             when (it.status) {
                 Status.SUCCESS -> {
                     val user = getUser(excludePassword = true, uID = it.data?.uid)
-                    loginViewModel.saveUserData(user)
+                    loginViewModel.saveUserData(user!!)
                 }
 
                 Status.ERROR -> {
@@ -113,11 +116,7 @@ class RegisterFragment : Fragment() {
                 )
 
                 picker.addOnPositiveButtonClickListener {
-                    val days = getDateDiffInDays(
-                        Date(it),
-                        Date(System.currentTimeMillis())
-                    )
-                    if (days < 18 * 365) {
+                    if (isValidBirthDate(it).not()) {
                         Toast.makeText(
                             requireContext(),
                             getString(R.string.age_less_than_required),
@@ -131,15 +130,16 @@ class RegisterFragment : Fragment() {
             }
 
             btnRegister.setOnClickListener {
-                loginViewModel.register(
-                    getUser()
-                )
+                getUser()?.let {
+                    loginViewModel.register(it)
+                }
+
             }
         }
     }
 
-    private fun getUser(excludePassword: Boolean = false, uID: String? = null): User {
-        val user: User
+    private fun getUser(excludePassword: Boolean = false, uID: String? = null): User? {
+        val user: User?
 
         binding.apply {
             val firstName = etFirstName.text.toString().trim()
@@ -148,10 +148,42 @@ class RegisterFragment : Fragment() {
             val password = etPassword.text.toString().trim()
             val birthdate = getBirthdate()
 
-            user = User(firstName, lastName, email, birthdate, password = if(excludePassword) null else password, uID = uID)
+            user = if (firstName.isEmpty()) {
+                parent.showSnackBar(getString(R.string.enter_first_name))
+                null
+            } else if (lastName.isEmpty()) {
+                parent.showSnackBar(getString(R.string.enter_last_name))
+                null
+            } else if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                parent.showSnackBar(getString(R.string.enter_email))
+                null
+            } else if (password.length < 8) {
+                parent.showSnackBar(getString(R.string.enter_password))
+                null
+            } else if(isValidBirthDate(selectedBirthDay).not()) {
+                parent.showSnackBar(getString(R.string.choose_birthday))
+                null
+            } else {
+                User(
+                    firstName,
+                    lastName,
+                    email,
+                    birthdate,
+                    password = if (excludePassword) null else password,
+                    uID = uID
+                )
+            }
         }
 
         return user
+    }
+
+    private fun isValidBirthDate(newSelectedDate: Long): Boolean {
+        val days = getDateDiffInDays(
+            Date(newSelectedDate),
+            Date(System.currentTimeMillis())
+        )
+        return days >= 18 * 365
     }
 
     private fun getBirthdate(): String {
