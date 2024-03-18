@@ -1,0 +1,15 @@
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.gradle/7.0.2/fileHashes/fileHashes.bin
+*.bin
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+.idea/misc.xml
+*.lock
+/.idea

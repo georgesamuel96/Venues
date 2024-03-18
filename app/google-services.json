@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1096454477888",
+    "project_id": "venues-application",
+    "storage_bucket": "venues-application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096454477888:android:8d6755506f618e978227a5",
+        "android_client_info": {
+          "package_name": "com.example.venues"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsrlQvRY4NWN-dUKKuH3g9BaaMB--oyzs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
