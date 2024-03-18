@@ -45,6 +45,7 @@ class RegisterFragment : Fragment() {
     private fun initializeViewModel() {
         getLoadingObserver()
         getRegisterObserver()
+        getNewUserObserver()
     }
 
     private fun getLoadingObserver() {
@@ -58,18 +59,11 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    private fun getRegisterObserver() {
-        loginViewModel.currentUserLiveData.observe(viewLifecycleOwner) {
+    private fun getNewUserObserver() {
+        loginViewModel.newUserLiveData.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> {
-                    val user = getUser(excludePassword = true)
-                    requireActivity().startActivity(
-                        Intent(
-                            requireContext(),
-                            MainActivity::class.java
-                        )
-                    )
-                    requireActivity().finish()
+                    openMainActivity()
                 }
 
                 Status.ERROR -> {
@@ -77,6 +71,31 @@ class RegisterFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun getRegisterObserver() {
+        loginViewModel.currentUserLiveData.observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.SUCCESS -> {
+                    val user = getUser(excludePassword = true, uID = it.data?.uid)
+                    loginViewModel.saveUserData(user)
+                }
+
+                Status.ERROR -> {
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun openMainActivity() {
+        requireActivity().startActivity(
+            Intent(
+                requireContext(),
+                MainActivity::class.java
+            )
+        )
+        requireActivity().finish()
     }
 
     private fun listeners() {
@@ -119,7 +138,7 @@ class RegisterFragment : Fragment() {
         }
     }
 
-    private fun getUser(excludePassword: Boolean = false): User {
+    private fun getUser(excludePassword: Boolean = false, uID: String? = null): User {
         val user: User
 
         binding.apply {
@@ -129,7 +148,7 @@ class RegisterFragment : Fragment() {
             val password = etPassword.text.toString().trim()
             val birthdate = getBirthdate()
 
-            user = User(firstName, lastName, email, birthdate, password = if(excludePassword) null else password)
+            user = User(firstName, lastName, email, birthdate, password = if(excludePassword) null else password, uID = uID)
         }
 
         return user
