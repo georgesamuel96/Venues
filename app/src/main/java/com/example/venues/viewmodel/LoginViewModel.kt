@@ -65,4 +65,20 @@ class LoginViewModel @Inject constructor(
                 }
         }
     }
+
+    fun login(user: User) {
+        loadingState.postValue(true)
+
+        firebaseAuth.signInWithEmailAndPassword(user.email, user.password!!)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    currentUser.postValue(Resource.success(firebaseAuth.currentUser))
+                } else {
+                    Log.e("LoginViewModel", "createUserWithEmail:failure", task.exception)
+                    currentUser.postValue(Resource.error("Authentication failed."))
+                }
+
+                loadingState.postValue(false)
+            }
+    }
 }
