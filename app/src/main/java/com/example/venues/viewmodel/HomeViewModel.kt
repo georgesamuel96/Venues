@@ -29,7 +29,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             loadingState.postValue(true)
 
-            val response = venuesRepo.searchLocation("27.444442064288378,30.82587573991425")
+            val response = venuesRepo.searchLocation("$lat,$long")
 
             if(response?.isSuccessful == true) {
                 val body = response.body()

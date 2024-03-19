@@ -87,6 +87,10 @@ dependencies {
     //Swipe to refresh
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
 
+    //Location
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
+    implementation ("com.google.android.gms:play-services-base:18.3.0")
+
 }
 kapt {
     correctErrorTypes = true

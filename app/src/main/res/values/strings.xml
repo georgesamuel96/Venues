@@ -25,4 +25,13 @@
     <string name="no_venues_near_you">No venues near you!</string>
     <string name="auth_failed">Authentication failed.</string>
     <string name="cannot_create_user">Create create new user.</string>
+    <string name="error_open_location">Cannot access your location!</string>
+    <string name="open_location">Open Location</string>
+    <string name="okay">Okay</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">Error</string>
+    <string name="enable">Enable</string>
+    <string name="message_enable_gps_location">Please enable your phone GPS location to access your location</string>
+    <string name="settings">Settings</string>
+    <string name="message_location_permission">Please allow location permission to get your location</string>
 </resources>
