@@ -6,4 +6,6 @@
     </style>
 
     <style name="Theme.Venues" parent="Base.Theme.Venues" />
+
+    <style name="Theme.Home" parent="Theme.Material3.Dark" />
 </resources>

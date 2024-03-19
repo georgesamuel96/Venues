@@ -16,4 +16,7 @@
     <string name="enter_email">Please enter your valid email</string>
     <string name="enter_password">Please enter a valid password contains at least 8 characters</string>
     <string name="choose_birthday">Please enter your birthdate and you have to be older than 18 years old</string>
+    <string name="home">Home</string>
+    <string name="logout">Logout</string>
+    <string name="profile">Profile</string>
 </resources>
