@@ -65,7 +65,7 @@ class LoginFragment : Fragment() {
                 }
 
                 Status.ERROR -> {
-                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(it.message?: R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                 }
             }
         }

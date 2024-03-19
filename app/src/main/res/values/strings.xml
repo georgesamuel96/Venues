@@ -18,5 +18,11 @@
     <string name="choose_birthday">Please enter your birthdate and you have to be older than 18 years old</string>
     <string name="home">Home</string>
     <string name="logout">Logout</string>
-    <string name="profile">Profile</string>
+    <string name="profile">My Profile</string>
+    <string name="full_address">Address: %1$s</string>
+    <string name="category">Category: %1$s</string>
+    <string name="something_went_wrong">Something went wrong!</string>
+    <string name="no_venues_near_you">No venues near you!</string>
+    <string name="auth_failed">Authentication failed.</string>
+    <string name="cannot_create_user">Create create new user.</string>
 </resources>

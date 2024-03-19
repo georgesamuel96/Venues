@@ -81,6 +81,12 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.50")
     kapt("androidx.hilt:hilt-compiler:1.1.0")
 
+    //Glide
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+
+    //Swipe to refresh
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+
 }
 kapt {
     correctErrorTypes = true

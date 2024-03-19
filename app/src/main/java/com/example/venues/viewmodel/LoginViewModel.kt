@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.venues.R
 import com.example.venues.data.model.User
 import com.example.venues.data.remote.Resource
 import com.example.venues.utils.Constants.USERS_COLLECTION
@@ -41,7 +42,7 @@ class LoginViewModel @Inject constructor(
                         currentUser.postValue(Resource.success(firebaseAuth.currentUser))
                     } else {
                         Log.e("LoginViewModel", "createUserWithEmail:failure", task.exception)
-                        currentUser.postValue(Resource.error("Authentication failed."))
+                        currentUser.postValue(Resource.error(R.string.auth_failed))
 
                         loadingState.postValue(false)
                     }
@@ -58,7 +59,7 @@ class LoginViewModel @Inject constructor(
                         newUser.postValue(Resource.success(user))
                     } else {
                         Log.e("LoginViewModel", "createUserFireStore:failure", it.exception)
-                        newUser.postValue(Resource.error("Create create new user."))
+                        newUser.postValue(Resource.error(R.string.cannot_create_user))
                     }
 
                     loadingState.postValue(false)
@@ -75,7 +76,7 @@ class LoginViewModel @Inject constructor(
                     currentUser.postValue(Resource.success(firebaseAuth.currentUser))
                 } else {
                     Log.e("LoginViewModel", "createUserWithEmail:failure", task.exception)
-                    currentUser.postValue(Resource.error("Authentication failed."))
+                    currentUser.postValue(Resource.error(R.string.auth_failed))
                 }
 
                 loadingState.postValue(false)
