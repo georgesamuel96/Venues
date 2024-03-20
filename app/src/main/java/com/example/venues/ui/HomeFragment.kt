@@ -2,26 +2,33 @@ package com.example.venues.ui
 
 import android.Manifest
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.example.venues.R
+import com.example.venues.data.model.Venues
 import com.example.venues.data.remote.Status
 import com.example.venues.databinding.FragmentHomeBinding
+import com.example.venues.databinding.ItemVenuesBinding
 import com.example.venues.utils.Util
+import com.example.venues.utils.Util.getAddress
+import com.example.venues.utils.Util.getIconURL
 import com.example.venues.utils.Util.showAlert
 import com.example.venues.utils.Util.showSnackBar
 import com.example.venues.viewmodel.HomeViewModel
@@ -32,11 +39,18 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private val homeViewModel: HomeViewModel by viewModels()
     private var _binding: FragmentHomeBinding? = null
@@ -72,6 +86,87 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    private fun initializeMap() {
+        // Get the SupportMapFragment and request notification when the map is ready to be used.
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
+        mapFragment?.getMapAsync(this)
+    }
+
+
+    override fun onMapReady(map : GoogleMap) {
+        val venuesList = venuesAdapter.getVenuesList()
+        val markersList = mutableListOf<LatLng>()
+
+
+        // Add some markers to the map, and add a data object to each marker.
+        for(venues in venuesList.withIndex()) {
+            markersList.add(LatLng(venues.value.location.lat.toDouble(), venues.value.location.lng.toDouble()))
+
+            val marker = map.addMarker(
+                MarkerOptions()
+                    .position(markersList.last())
+                    .title(venues.value.name)
+            )
+            marker?.tag = venues.index
+        }
+        // Set a listener for marker click.
+        map.setOnMarkerClickListener(this)
+
+        val markerBounds = LatLngBounds.Builder()
+
+        // Loop through your markers and add their locations to the builder
+        for (marker in markersList) {
+            markerBounds.include(marker)
+        }
+        val bounds = markerBounds.build()
+        val padding = 100
+
+        // Animate the camera to show all markers with padding
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        // Retrieve the data from the marker.
+        val index = marker.tag as? Int
+        index?.let {
+            val venues = venuesAdapter.getVenuesAt(it)
+
+            showAlertForVenuesDetails(venues)
+        }
+
+        return false
+    }
+
+    private fun showAlertForVenuesDetails(venues: Venues) {
+        val dialog = Dialog(requireContext(), R.style.PauseDialog)
+        val inflater =
+            requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+        val binding = ItemVenuesBinding.inflate(inflater)
+        dialog.setContentView(binding.root)
+
+        binding.apply {
+            tvName.text = venues.name
+            tvAddress.text = getString(R.string.full_address, getAddress(venues))
+            if (venues.categories.isNotEmpty()) {
+                tvCategory.text =
+                    getString(R.string.category, venues.categories[0].name)
+                Glide.with(requireContext())
+                    .load(getIconURL(venues))
+                    .into(ivCategory)
+
+                groupCategory.visibility = View.VISIBLE
+            } else {
+                groupCategory.visibility = View.GONE
+            }
+        }
+
+        val width = (resources.displayMetrics.widthPixels * 0.85).toInt()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.show()
+    }
+
     private fun initialization() {
         binding.apply {
             rvVenues.adapter = venuesAdapter
@@ -89,6 +184,17 @@ class HomeFragment : Fragment() {
             binding.btnOpenLocation.setOnClickListener {
                 binding.containerLocation.visibility = View.GONE
                 checkGPSPermission()
+            }
+
+            switchMap.setOnCheckedChangeListener { _, isChecked ->
+                if(isChecked) {
+                    swipeRefresh.visibility = View.GONE
+                    map.visibility = View.VISIBLE
+                    initializeMap()
+                } else {
+                    map.visibility = View.GONE
+                    swipeRefresh.visibility = View.VISIBLE
+                }
             }
         }
     }

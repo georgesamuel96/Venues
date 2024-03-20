@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".ui.HomeFragment">
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:checked="false"
+        android:text="@string/show_venus_list_on_map"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:switchPadding="8dp" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="0dp"
@@ -13,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/switch_map">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/parent"
@@ -83,5 +94,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switch_map"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

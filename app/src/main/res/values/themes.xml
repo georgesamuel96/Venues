@@ -8,4 +8,10 @@
     <style name="Theme.Venues" parent="Base.Theme.Venues" />
 
     <style name="Theme.Home" parent="Theme.Material3.Dark" />
+
+    <style name="PauseDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>

@@ -9,6 +9,8 @@ import com.bumptech.glide.Glide
 import com.example.venues.R
 import com.example.venues.data.model.Venues
 import com.example.venues.databinding.ItemVenuesBinding
+import com.example.venues.utils.Util.getAddress
+import com.example.venues.utils.Util.getIconURL
 
 class VenuesAdapter(
     private val venuesList: MutableList<Venues>
@@ -37,6 +39,14 @@ class VenuesAdapter(
         this.notifyDataSetChanged()
     }
 
+    fun getVenuesList(): List<Venues> {
+        return venuesList
+    }
+
+    fun getVenuesAt(index: Int): Venues {
+        return venuesList[index]
+    }
+
     class VenuesViewHolder(private val binding: ItemVenuesBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -56,25 +66,6 @@ class VenuesAdapter(
                     groupCategory.visibility = View.GONE
                 }
             }
-        }
-
-        private fun getIconURL(venues: Venues): String {
-            return "${venues.categories[0].icon.prefix}bg_64${venues.categories[0].icon.suffix}"
-        }
-
-        private fun getAddress(venues: Venues): String {
-            val stringBuilder = StringBuilder()
-            venues.location.formattedAddress.forEach {
-                if (it.isNotEmpty()) {
-                    stringBuilder.append(it)
-                    stringBuilder.append(", ")
-                }
-            }
-            val fullAddress = stringBuilder.toString()
-            return fullAddress.substring(
-                0,
-                if (fullAddress.length >= 2) fullAddress.length - 2 else fullAddress.length
-            )
         }
     }
 }
