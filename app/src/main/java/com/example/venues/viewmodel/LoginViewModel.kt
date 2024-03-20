@@ -10,6 +10,7 @@ import com.example.venues.data.model.User
 import com.example.venues.data.remote.Resource
 import com.example.venues.utils.Constants.USERS_COLLECTION
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +22,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firebaseFireStore: FirebaseFirestore
-) : ViewModel() {
-
-    private val loadingState = MutableLiveData<Boolean>()
-    val loadingStateLiveData: LiveData<Boolean> = loadingState
+) : ProfileViewModel(firebaseAuth, firebaseFireStore) {
 
     private val currentUser = MutableLiveData<Resource<FirebaseUser>>()
     val currentUserLiveData: LiveData<Resource<FirebaseUser>> = currentUser
@@ -41,8 +39,12 @@ class LoginViewModel @Inject constructor(
                     if (task.isSuccessful) {
                         currentUser.postValue(Resource.success(firebaseAuth.currentUser))
                     } else {
-                        Log.e("LoginViewModel", "createUserWithEmail:failure", task.exception)
-                        currentUser.postValue(Resource.error(R.string.auth_failed))
+                        if(task.exception is FirebaseAuthUserCollisionException) {
+                            currentUser.postValue(Resource.error(R.string.user_exist))
+                        } else {
+                            Log.e("LoginViewModel", "createUserWithEmail:failure", task.exception)
+                            currentUser.postValue(Resource.error(R.string.auth_failed))
+                        }
 
                         loadingState.postValue(false)
                     }
